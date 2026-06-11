@@ -1,0 +1,70 @@
+<!--
+  ============================================================
+  郑重声明（宁可信其有，不可信其无）：
+
+  本程序为纯算法驱动的娱乐工具，所有解读均为规则自动组合生成，
+  不含任何人工算命介入。开发者仅编写代码与数据，不参与占卜行为，
+  不窥探天机。本程序的开发与维护不损开发者白诗雨的任何福德、阴德、
+  运势、健康、寿命或其他任何层面的利益。
+
+  使用者所见的九宫格与解读，本质是计算机随机排列与模板组合，
+  仅供使用者自行参考娱乐。一切因果、决策、心理影响，皆由使用者
+  自身承担。使用者使用本程序即视为同意以上声明。
+  ============================================================
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>玄机九宫</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!--
+    ============================================================
+    郑重声明：本程序为纯算法娱乐工具，不损开发者白诗雨任何福德、
+    阴德、运势、健康、寿命。使用者自行承担一切因果与心理影响。
+    ============================================================
+  -->
+
+  <!-- ========== 首页 ========== -->
+  <div id="home-page" class="home-page">
+    <div class="home-title">玄机九宫</div>
+    <div class="home-subtitle">六十灵牌 · 八卦九宫 · 观运知命</div>
+    <div class="home-bagua">
+      <div class="bagua-ring ring-1"></div>
+      <div class="bagua-ring ring-2"></div>
+      <div class="bagua-ring ring-3"></div>
+      <div class="bagua-core">◎</div>
+    </div>
+    <button id="start-btn" class="btn-start">开启玄机</button>
+    <div class="home-disclaimer">
+      本程序为纯算法驱动的娱乐工具，<br>
+      解读结果为规则自动组合生成，<br>
+      仅供使用者自行参考娱乐。
+    </div>
+  </div>
+
+  <!-- ========== 抽牌页 ========== -->
+  <div id="draw-page" class="draw-page">
+    <!-- 由 app.js 动态渲染 -->
+  </div>
+
+  <!-- ========== 结果页 ========== -->
+  <div id="result-page" class="result-page">
+    <!-- 由 app.js 动态渲染 -->
+  </div>
+
+  <!--
+    ============================================================
+    郑重声明：本程序为纯算法娱乐工具，不损开发者白诗雨任何福德、
+    阴德、运势、健康、寿命。使用者自行承担一切因果与心理影响。
+    ============================================================
+  -->
+
+  <script src="data.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

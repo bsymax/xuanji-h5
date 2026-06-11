@@ -1,0 +1,1023 @@
+/*
+ * ============================================================
+ * 郑重声明：本程序为纯算法驱动娱乐工具，开发者白诗雨不参与占卜行为，
+ * 不窥探天机。本程序开发与维护不损开发者任何福德、阴德、运势、健康、
+ * 寿命或其他任何层面的利益。所有解读仅供使用者自行参考娱乐。
+ * ============================================================
+ */
+
+/* ========== 基础重置 ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* 玄紫秘仪 · 配色系统 */
+  --bg-main: #0d0a1e;
+  --bg-card: #1b1430;
+  --bg-card-hover: #2a1f45;
+  --primary: #9162b6;
+  --primary-light: #c4b5d6;
+  --primary-dim: rgba(145, 98, 182, 0.3);
+  --primary-faint: rgba(145, 98, 182, 0.08);
+  --text-muted: #8a8099;
+  --white: #ffffff;
+  --ji-color: #7dba8e;
+  --xiong-color: #c55a6e;
+  --ping-color: #c4b5d6;
+  --radius: 16px;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--primary-light);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Noto Serif SC', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ========== 首页 ========== */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.home-title {
+  font-size: 56px;
+  color: var(--primary);
+  letter-spacing: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  animation: fadeInUp 1s ease;
+}
+
+.home-subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+  letter-spacing: 6px;
+  margin-bottom: 60px;
+  animation: fadeInUp 1s ease 0.2s both;
+}
+
+.home-bagua {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 50px;
+  position: relative;
+  animation: fadeInUp 1s ease 0.4s both, rotateSlow 60s linear infinite;
+}
+
+/* 三层光晕圆环 — 统一从父容器中心定位，保证同心 */
+.bagua-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.ring-1 {
+  width: 170px; height: 170px;
+  border: 1.5px solid var(--primary-dim);
+}
+
+.ring-2 {
+  width: 220px; height: 220px;
+  border: 1px solid rgba(145, 98, 182, 0.16);
+}
+
+.ring-3 {
+  width: 268px; height: 268px;
+  border: 1px solid rgba(145, 98, 182, 0.09);
+  animation: ringPulse 5s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* 中心太极点 */
+.bagua-core {
+  font-size: 42px;
+  color: var(--primary);
+  position: relative;
+  z-index: 2;
+  line-height: 1;
+  text-shadow: 0 0 14px rgba(145, 98, 182, 0.5);
+}
+
+.btn-start {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-size: 18px;
+  padding: 14px 48px;
+  border-radius: 30px;
+  letter-spacing: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: fadeInUp 1s ease 0.6s both;
+  font-family: inherit;
+}
+
+.btn-start:hover,
+.btn-start:active {
+  background: var(--primary);
+  color: var(--bg-main);
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(145, 98, 182, 0.4);
+}
+
+.home-disclaimer {
+  margin-top: 60px;
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  animation: fadeInUp 1s ease 0.8s both;
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+/* ========== 抽牌页 ========== */
+.draw-page {
+  display: none;
+  min-height: 100vh;
+}
+
+.draw-container {
+  padding: 20px 16px 40px;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.draw-header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.draw-title {
+  font-size: 24px;
+  color: var(--primary);
+  letter-spacing: 10px;
+  font-weight: bold;
+}
+
+.draw-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 4px;
+}
+
+/* 顺序提示条 —— 固定高度，与结果页头部等高对齐 */
+.order-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  background: var(--primary-faint);
+  border: 1px solid var(--primary-dim);
+  border-radius: 10px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--primary-light);
+  letter-spacing: 1px;
+}
+
+.order-banner strong {
+  color: var(--primary);
+}
+
+.order-icon {
+  font-size: 18px;
+  color: var(--primary);
+  opacity: 0.6;
+}
+
+/* ===== 3×3 九宫虚框 ===== */
+.jiugongge-draw {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 360px;
+  margin: 0 auto 24px;
+  aspect-ratio: 1;
+}
+
+/* ----- 抽牌页格子 & 结果页格子：统一大小/圆角/内边距/间距 ----- */
+.grid-slot,
+.grid-cell {
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  position: relative;
+  min-height: 100px;
+}
+
+/* ----- 抽牌页格子独有样式 ----- */
+.grid-slot {
+  border: 1.5px dashed var(--primary-dim);
+  background: var(--primary-faint);
+  transition: all 0.25s ease;
+}
+
+.grid-slot.empty {
+  cursor: default;
+  background: rgba(27, 20, 48, 0.35);
+  border-color: rgba(145, 98, 182, 0.12);
+}
+
+.grid-slot.empty .slot-bagua-name { opacity: 0.4; }
+.grid-slot.empty .slot-hint { opacity: 0.35; }
+.grid-slot.empty .slot-direction { opacity: 0.25; }
+
+/* 下一个要填的位置 —— 呼吸光晕 */
+.grid-slot.next-target {
+  border-color: var(--primary);
+  border-style: solid;
+  background: rgba(145, 98, 182, 0.1);
+  box-shadow: 0 0 16px rgba(145, 98, 182, 0.25);
+  animation: targetPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes targetPulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(145, 98, 182, 0.25); }
+  50% { box-shadow: 0 0 28px rgba(145, 98, 182, 0.5); }
+}
+
+/* 拖拽悬停 —— 强磁吸光效 */
+.grid-slot.drag-over {
+  border-color: var(--primary);
+  border-style: solid;
+  background: rgba(145, 98, 182, 0.18);
+  box-shadow: 0 0 24px rgba(145, 98, 182, 0.5);
+  transform: scale(1.04);
+}
+
+/* 磁吸命中 —— 短闪 */
+.grid-slot.snap-in {
+  border-color: var(--ji-color);
+  border-style: solid;
+  background: rgba(125, 186, 142, 0.15);
+  box-shadow: 0 0 20px rgba(125, 186, 142, 0.4);
+  transition: all 0.15s ease;
+}
+
+/* 已填牌 —— 饱和度高，边框更实在 + 内部牌形虚线 */
+.grid-slot.filled {
+  border: 1.5px solid rgba(196, 181, 214, 0.35);
+  background: rgba(27, 20, 48, 0.85);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* 已填牌 —— 内部画一张牌形状的虚线框 */
+.grid-slot.filled::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 84px;
+  border: 1px dashed rgba(145, 98, 182, 0.35);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 已填牌的文字层级要盖过虚线 */
+.grid-slot.filled .slot-bagua-name,
+.grid-slot.filled .slot-symbol,
+.grid-slot.filled .slot-card-name,
+.grid-slot.filled .slot-element {
+  position: relative;
+  z-index: 1;
+}
+
+.slot-bagua-name {
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.slot-symbol {
+  font-size: 22px;
+  color: var(--primary-light);
+}
+
+.slot-hint {
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.slot-direction {
+  font-size: 9px;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.slot-card-name {
+  font-size: 12px;
+  color: var(--primary-light);
+  font-weight: bold;
+}
+
+.slot-element {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ===== 扇形牌面 ===== */
+.card-fan-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-top: 12px;
+}
+
+.card-fan-container {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 150px;
+  overflow: visible;
+  touch-action: none;
+  cursor: default;
+}
+
+/* 九宫格淡入 */
+.jiugongge-draw {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.jiugongge-visible {
+  opacity: 1;
+}
+
+/* 底部信息行：计数 + 拖拽提示并排 */
+.fan-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 2px;
+}
+
+/* ===== 洗牌动画 ===== */
+.shuffle-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shuffle-deck {
+  position: relative;
+  width: 72px;
+  height: 96px;
+  margin: 0 auto;
+}
+
+.shuffle-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  border: 1.5px solid var(--primary-dim);
+  background: linear-gradient(135deg, #1b1430 0%, #241a3a 40%, #1b1430 100%);
+  animation: shuffleRiffle 0.55s ease-in-out infinite;
+  animation-delay: calc(var(--s, 0) * 0.27s);
+  transform-origin: center bottom;
+}
+
+.shuffle-card::after {
+  content: '灵牌';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--primary);
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+@keyframes shuffleRiffle {
+  0%   { transform: translateX(0) rotate(0); z-index: 0; }
+  25%  { transform: translateX(calc(var(--s, 0) * 18px - 9px)) rotate(calc(var(--s, 0) * 6deg - 3deg)); z-index: 1; }
+  50%  { transform: translateX(0) rotate(0); z-index: 0; }
+  75%  { transform: translateX(calc(var(--s, 0) * -18px + 9px)) rotate(calc(var(--s, 0) * -6deg + 3deg)); z-index: 1; }
+  100% { transform: translateX(0) rotate(0); z-index: 0; }
+}
+
+/* wrapper */
+.fan-card-wrap {
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  pointer-events: none;
+}
+
+.fan-card {
+  position: absolute;
+  left: -24px;   /* 负半宽，使定位点居中 */
+  top: -33px;    /* 负半高，使定位点居中 */
+  width: 48px;
+  height: 66px;
+  border-radius: 6px;
+  border: 1.2px solid var(--primary-dim);
+  background: linear-gradient(135deg, #1b1430 0%, #241a3a 40%, #1b1430 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.18s ease,
+              border-color 0.18s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  pointer-events: auto;
+}
+
+.fan-card:active {
+  cursor: grabbing;
+}
+
+.fan-card-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.fan-card-label {
+  font-size: 9px;
+  color: var(--primary);
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+/* 预选弹出 —— rotate 由 JS 设置，hover 时叠加 translateY */
+.fan-card--hover {
+  transform: translateY(-14px) scale(1.15) !important;
+  z-index: 999 !important;
+  box-shadow: 0 0 22px rgba(145, 98, 182, 0.55), 0 4px 16px rgba(0, 0, 0, 0.4);
+  border-color: var(--primary);
+}
+
+/* 已抽取 —— 留空位 */
+.fan-card--drawn {
+  opacity: 0;
+  pointer-events: none;
+  cursor: default;
+  transition: opacity 0.45s ease, transform 0s;
+}
+
+/* 正在被拖拽 —— 原位淡化 */
+.fan-card--dragging {
+  opacity: 0.25;
+  pointer-events: none;
+  cursor: default;
+  transition: opacity 0.15s ease;
+}
+
+/* 扇形底部信息行 */
+.fan-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: -2px;
+}
+
+.fan-remaining {
+  font-size: 12px;
+  color: var(--primary-light);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.fan-remaining strong {
+  color: var(--primary);
+  font-size: 12px;
+}
+
+/* 拖拽提示 */
+.deck-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.deck-hint strong {
+  color: var(--primary);
+}
+
+.hint-seq {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* ===== 拖拽中的牌 ===== */
+.drag-card {
+  width: 56px;
+  height: 74px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #241a3a 0%, var(--bg-card) 100%);
+  border: 2px solid var(--primary);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(145,98,182,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.drag-card-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.drag-card-name {
+  font-size: 18px;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.drag-card-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+}
+
+/* 重置按钮 */
+.btn-reset {
+  display: none;
+  margin: 20px auto 0;
+  background: transparent;
+  border: 1px solid var(--text-muted);
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 8px 24px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ===== 卡牌覆盖层（翻牌展示） ===== */
+.card-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlayFadeIn 0.3s ease;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.card-overlay.overlay-fade-out {
+  animation: overlayFadeOut 0.25s ease forwards;
+}
+
+@keyframes overlayFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.card-overlay-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 6, 20, 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.card-overlay-card {
+  position: relative;
+  width: 78vw;
+  max-width: 320px;
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(145deg, #1b1430 0%, #241a3a 40%, #1b1430 100%);
+  border: 2px solid var(--primary-dim);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(145, 98, 182, 0.25), 0 20px 60px rgba(0,0,0,0.6);
+  animation: cardPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes cardPopIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.card-overlay-pos {
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+}
+
+.card-overlay-element {
+  font-size: 14px;
+  color: var(--primary);
+  letter-spacing: 4px;
+  font-weight: bold;
+}
+
+.card-overlay-name {
+  font-size: 36px;
+  color: var(--primary);
+  letter-spacing: 6px;
+  font-weight: bold;
+  text-shadow: 0 0 16px rgba(145, 98, 182, 0.5);
+}
+
+.card-overlay-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--primary-dim);
+  margin: 4px 0;
+}
+
+.card-overlay-gist {
+  font-size: 16px;
+  color: var(--primary-light);
+  line-height: 1.7;
+  letter-spacing: 2px;
+  max-width: 260px;
+}
+
+.card-overlay-hint {
+  position: absolute;
+  bottom: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  letter-spacing: 2px;
+}
+
+/* ========== 结果页 ========== */
+.result-page {
+  display: none;
+  min-height: 100vh;
+}
+
+.result-container {
+  padding: 20px 16px 40px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.result-header {
+  text-align: center;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.result-title {
+  font-size: 24px;
+  color: var(--primary);
+  letter-spacing: 10px;
+  margin-bottom: 6px;
+}
+
+.result-overall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.overall-score {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.score-ji { border: 2px solid var(--ji-color); background: rgba(125, 186, 142, 0.1); }
+.score-ping { border: 2px solid var(--ping-color); background: rgba(196, 181, 214, 0.1); }
+.score-xiong { border: 2px solid var(--xiong-color); background: rgba(197, 90, 110, 0.1); }
+
+.score-number {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.score-ji .score-number { color: var(--ji-color); }
+.score-ping .score-number { color: var(--ping-color); }
+.score-xiong .score-number { color: var(--xiong-color); }
+
+.score-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.overall-level {
+  font-size: 18px;
+  letter-spacing: 6px;
+  font-weight: bold;
+}
+
+.text-ji { color: var(--ji-color); }
+.text-ping { color: var(--ping-color); }
+.text-xiong { color: var(--xiong-color); }
+
+.result-stats {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 14px;
+}
+
+.stat-ji { color: var(--ji-color); }
+.stat-ping { color: var(--ping-color); }
+.stat-xiong { color: var(--xiong-color); }
+
+/* 九宫格 — 与抽牌页完全统一：同间距、同宽度、同 aspect-ratio */
+.jiugongge {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 360px;
+  margin: 0 auto 24px;
+  aspect-ratio: 1;
+}
+
+/* 结果页格子独有：背景 + 边框 */
+.grid-cell {
+  background: var(--bg-card);
+  text-align: center;
+  border: 1px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.grid-cell:active { transform: scale(1.03); }
+.grid-cell.ji { border-color: rgba(125, 186, 142, 0.3); background: rgba(125, 186, 142, 0.08); }
+.grid-cell.xiong { border-color: rgba(197, 90, 110, 0.3); background: rgba(197, 90, 110, 0.08); }
+.grid-cell.ping { border-color: rgba(196, 181, 214, 0.15); }
+
+.grid-cell#center-cell {
+  background: var(--primary-faint);
+  border-color: var(--primary);
+  box-shadow: 0 0 16px rgba(145, 98, 182, 0.15);
+}
+
+.cell-bagua-name {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cell-symbol {
+  font-size: 24px;
+  color: var(--primary-light);
+}
+
+.cell-card-name {
+  font-size: 13px;
+  color: var(--primary-light);
+  font-weight: bold;
+}
+
+.cell-element {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.cell-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.cell-tag.ji { background: rgba(125, 186, 142, 0.2); color: var(--ji-color); }
+.cell-tag.ping { background: rgba(196, 181, 214, 0.15); color: var(--ping-color); }
+.cell-tag.xiong { background: rgba(197, 90, 110, 0.2); color: var(--xiong-color); }
+
+/* 特殊天象 */
+.combos-section,
+.balance-section,
+.positions-section,
+.summary-section {
+  max-width: 600px;
+  margin: 0 auto 24px;
+}
+
+.section-title {
+  font-size: 16px;
+  color: var(--primary);
+  letter-spacing: 4px;
+  border-left: 3px solid var(--primary);
+  padding-left: 12px;
+  margin-bottom: 12px;
+}
+
+.combo-item {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--primary-light);
+  padding: 10px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.combo-name {
+  color: var(--primary);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.balance-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--primary-light);
+}
+
+/* 各宫详解 */
+.position-card {
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid transparent;
+}
+
+.position-card.ji { border-left: 3px solid var(--ji-color); }
+.position-card.ping { border-left: 3px solid var(--ping-color); }
+.position-card.xiong { border-left: 3px solid var(--xiong-color); }
+
+.pos-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.pos-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--bg-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.pos-bagua-name {
+  font-size: 15px;
+  color: var(--primary-light);
+  flex: 1;
+}
+
+.pos-fortune {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 8px;
+}
+
+.pos-fortune.ji { background: rgba(125, 186, 142, 0.2); color: var(--ji-color); }
+.pos-fortune.ping { background: rgba(196, 181, 214, 0.15); color: var(--ping-color); }
+.pos-fortune.xiong { background: rgba(197, 90, 110, 0.2); color: var(--xiong-color); }
+
+.pos-card-name {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.pos-text {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--primary-light);
+  opacity: 0.9;
+}
+
+.pos-text-p { margin-bottom: 10px; }
+
+/* 总结 */
+.summary-text {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--primary-light);
+  background: var(--bg-card);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+/* 底部按钮 */
+.result-actions {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-restart {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-size: 16px;
+  padding: 12px 40px;
+  border-radius: 24px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.3s;
+}
+
+.btn-restart:hover,
+.btn-restart:active {
+  background: var(--primary);
+  color: var(--bg-main);
+  box-shadow: 0 0 20px rgba(145, 98, 182, 0.35);
+}
+
+/* ========== 动画 ========== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes cardAppear {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cardGlow {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.5) drop-shadow(0 0 8px rgba(145, 98, 182, 0.6)); }
+  100% { filter: brightness(1); }
+}
+
+@keyframes rotateSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 380px) {
+  .home-title { font-size: 40px; letter-spacing: 14px; }
+  .jiugongge, .jiugongge-draw { gap: 4px; }
+  .cell-card-name { font-size: 11px; }
+  .fan-card {
+    width: 40px;
+    height: 55px;
+    left: -20px;
+    top: -27.5px;
+  }
+  .card-fan-container {
+    height: 130px;
+  }
+}
